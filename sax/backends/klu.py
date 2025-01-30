@@ -136,6 +136,9 @@ def evaluate_circuit_klu(analyzed: Any, instances: Dict[str, SType]) -> SDense:
 
     _, n, _ = CextT_S_inv_I_CS_Cext.shape
     S = CextT_S_inv_I_CS_Cext.reshape(*batch_shape, n, n)
+    
+    # HACK: should happen within analyze/evaluate
+    S = S.T
 
     return S, {p: i for i, p in enumerate(port_map)}
 

@@ -300,7 +300,7 @@ def _sdense_to_sdict(S: Array, ports_map: Dict[str, int]) -> SDict:
     sdict = {}
     for p1, i in ports_map.items():
         for p2, j in ports_map.items():
-            sdict[p1, p2] = S[..., i, j]
+            sdict[p1, p2] = S[..., j, i]
     return sdict
 
 
@@ -347,7 +347,7 @@ def _consolidate_sdense(S, pm):
 
 def _sdense_to_scoo(S: Array, ports_map: Dict[str, int]) -> SCoo:
     S, ports_map = _consolidate_sdense(S, ports_map)
-    Sj, Si = jnp.meshgrid(jnp.arange(S.shape[-1]), jnp.arange(S.shape[-2]))
+    Si, Sj = jnp.meshgrid(jnp.arange(S.shape[-1]), jnp.arange(S.shape[-2]))
     return Si.ravel(), Sj.ravel(), S.reshape(*S.shape[:-2], -1), ports_map
 
 
@@ -402,7 +402,7 @@ def _scoo_to_sdense(
 ) -> SDense:
     n_col = len(ports_map)
     S = jnp.zeros((*Sx.shape[:-1], n_col, n_col), dtype=complex)
-    S = S.at[..., Si, Sj].add(Sx)
+    S = S.at[..., Sj, Si].add(Sx)
     return S, ports_map
 
 
